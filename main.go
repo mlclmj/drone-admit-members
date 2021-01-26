@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"net/http"
 
 	"github.com/drone/drone-admit-members/plugin"
@@ -14,6 +15,7 @@ import (
 	"github.com/google/go-github/v28/github"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 )
@@ -96,5 +98,12 @@ func main() {
 	logrus.Infof("server listening on address %s", spec.Bind)
 
 	http.Handle("/", handler)
+	http.HandleFunc("/healthz", healthz)
+	http.Handle("/metrics", promhttp.Handler())
 	logrus.Fatal(http.ListenAndServe(spec.Bind, nil))
+}
+
+func healthz(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	io.WriteString(w, "OK")
 }
