@@ -42,7 +42,7 @@ spec:
             httpGet:
               path: /healthz
               port: http
-          readynessProbe:
+          readinessProbe:
             httpGet:
               path: /healthz
               port: http
