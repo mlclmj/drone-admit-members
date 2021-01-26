@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drone-admission
+  labels:
+    app.kubernetes.io/name: drone-admission
+    app.kubernetes.io/instance: drone
+    app.kubernetes.io/component: admission
+    app.kubernetes.io/version: latest
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: drone-admission
+      app.kubernetes.io/instance: drone
+      app.kubernetes.io/component: admission
+  strategy:
+        {}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: drone-admission
+        app.kubernetes.io/instance: drone
+        app.kubernetes.io/component: admission
+      annotations:
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {}
+      containers:
+        - name: admission
+          securityContext:
+            {}
+          image: "mlclmj/drone-admit-members:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          resources:
+            {}
+          envFrom:
+            - configMapRef:
+                name: drone-admission
+            - secretRef:
+                name: drone-admission

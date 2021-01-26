@@ -35,6 +35,14 @@ Update your Drone server configuration to include the plugin address and the sha
 DRONE_ADMISSION_PLUGIN_ENDPOINT=http://1.2.3.4:3000
 DRONE_ADMISSION_PLUGIN_SECRET=bea26a2221fd8090ea38720fc445eca6
 ```
+### Kubernetes
+
+Basic deployment templates are provided for Kubernetes:
+
+```console
+kubectl -n drone apply -f kubernetes/templates
+```
+
 
 ## Testing
 
@@ -51,3 +59,9 @@ Use the following command to test account access:
 $ drone plugins admit octocat
 admission: access denied
 ```
+
+## Monitoring
+
+The admission extension provide a `/healthz` endpoint that can be used to ensure the application is running.
+
+A `/metrics` endpoint provides basic resource usage and total request count.
