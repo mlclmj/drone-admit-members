@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drone-admission
+  labels:
+    app.kubernetes.io/name: drone-admission
+    app.kubernetes.io/instance: drone
+    app.kubernetes.io/component: admission
+    app.kubernetes.io/version: latest
+data:
+  DRONE_BIND: ":3000"
+  DRONE_DEBUG: "true"
+  DRONE_SECRET: ""
+  DRONE_GITHUB_TOKEN: ""
+  DRONE_GITHUB_ORG: "acme"
+  DRONE_GITHUB_ORG_ADMINS: "false"
+  DRONE_GITHUB_ORG_ENABLE: "false"
+  DRONE_GITHUB_TEAM: "admins"
