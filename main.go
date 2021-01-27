@@ -20,8 +20,14 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// default context
-var nocontext = context.Background()
+var (
+	// Version is set at compile time.
+	version string
+	// Build revision is set at compile time.
+	rev string
+	// default context
+	nocontext = context.Background()
+)
 
 // default github endpoint
 const endpoint = "https://api.github.com/"
@@ -41,17 +47,35 @@ type spec struct {
 }
 
 func main() {
+
+	if version == "" {
+		version = "x.x.x"
+	}
+
+	if rev == "" {
+		rev = "[unknown]"
+	}
+
+	// log as Json
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
 	spec := new(spec)
 	err := envconfig.Process("", spec)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.WithFields(logrus.Fields{
+			"version": version,
+			"rev":     rev,
+		}).Fatal(err)
 	}
 
 	if spec.Debug {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 	if spec.Secret == "" {
-		logrus.Fatalln("missing secret key")
+		logrus.WithFields(logrus.Fields{
+			"version": version,
+			"rev":     rev,
+		}).Fatalln("missing secret key")
 	}
 	if spec.Bind == "" {
 		spec.Bind = ":3000"
@@ -95,7 +119,10 @@ func main() {
 		logrus.StandardLogger(),
 	)
 
-	logrus.Infof("server listening on address %s", spec.Bind)
+	logrus.WithFields(logrus.Fields{
+		"version": version,
+		"rev":     rev,
+	}).Infof("server listening on address %s", spec.Bind)
 
 	http.Handle("/", handler)
 	http.HandleFunc("/healthz", healthz)
