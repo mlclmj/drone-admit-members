@@ -13,46 +13,50 @@ steps:
   - go build -a -ldflags "-X main.version=${DRONE_TAG} -X main.rev=${DRONE_COMMIT}"
   - go test ./...
 
-- name: build_publish_dev
+- name: build_publish_unstable
   image: plugins/docker
   settings:
     repo: nytimes/drone-admit-members
-    # auto_tag: true
     secrets:
     username:
       from_secret: docker_username
     password:
       from_secret: docker_password
     tags:
-      - build
+      - unstable
       - ${DRONE_COMMIT}
+    build_args_from_env:
+      - DRONE_TAG
+      - DRONE_COMMIT
   when:
     ref:
-      include:
-        - refs/heads/master
       exclude:
         - refs/tags/*
+    branch:
+      - main
   depends_on:
     - test
 
-- name: build_publish_release
+- name: build_publish_stable
   image: plugins/docker
   settings:
     repo: nytimes/drone-admit-members
-    # auto_tag: true
     username:
       from_secret: docker_username
     password:
       from_secret: docker_password
     tags:
       - latest
+      - stable
       - ${DRONE_COMMIT}
       - ${DRONE_TAG}
+    build_args_from_env:
+      - DRONE_TAG
+      - DRONE_COMMIT
   when:
     ref:
-      - refs/heads/master
       - refs/tags/*
     branch:
-      - master
+      - main
   depends_on:
     - test
