@@ -17,7 +17,7 @@ steps:
   image: plugins/docker
   settings:
     repo: nytimes/drone-admit-members
-    auto_tag: true
+    # auto_tag: true
     secrets:
     username:
       from_secret: docker_username
@@ -39,7 +39,7 @@ steps:
   image: plugins/docker
   settings:
     repo: nytimes/drone-admit-members
-    auto_tag: true
+    # auto_tag: true
     username:
       from_secret: docker_username
     password:
@@ -52,5 +52,7 @@ steps:
     ref:
       - refs/heads/master
       - refs/tags/*
+    branch:
+      - master
   depends_on:
     - test
